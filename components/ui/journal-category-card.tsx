@@ -41,8 +41,10 @@ export function JournalCategoryCard({
       transition={{ type: "spring", stiffness: 340, damping: 24, mass: 0.7 }}
       onClick={onOpen}
       className={cn(
-        "group relative block w-full overflow-hidden rounded-[30px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.86),rgba(251,252,250,0.95))] p-5 text-left shadow-[0_18px_42px_rgba(96,111,93,0.10)] backdrop-blur-sm transition-shadow duration-300",
-        index % 2 === 0 ? "ml-8" : "ml-12",
+        "group relative block overflow-hidden rounded-[30px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.86),rgba(251,252,250,0.95))] p-5 text-left shadow-[0_18px_42px_rgba(96,111,93,0.10)] backdrop-blur-sm transition-shadow duration-300",
+        index % 2 === 0
+          ? "ml-4 w-[calc(100%-1rem)] sm:ml-8 sm:w-[calc(100%-2rem)]"
+          : "ml-8 w-[calc(100%-2rem)] sm:ml-12 sm:w-[calc(100%-3rem)]",
       )}
     >
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.42),rgba(255,255,255,0))]" />
