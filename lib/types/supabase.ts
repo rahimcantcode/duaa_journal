@@ -85,36 +85,56 @@ export type Database = {
         Row: {
           id: string;
           user_id: string;
-          google_form_link: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
           user_id: string;
-          google_form_link?: string | null;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
           user_id?: string;
-          google_form_link?: string | null;
           created_at?: string;
           updated_at?: string;
+        };
+        Relationships: [];
+      };
+      friends_dua_requests: {
+        Row: {
+          id: string;
+          name: string;
+          dua_request: string;
+          status: string;
+          note: string | null;
+          is_read: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          dua_request: string;
+          status?: string;
+          note?: string | null;
+          is_read?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          dua_request?: string;
+          status?: string;
+          note?: string | null;
+          is_read?: boolean;
+          created_at?: string;
         };
         Relationships: [];
       };
     };
     Views: Record<string, never>;
     Functions: {
-      get_public_google_form_link: {
-        Args: {
-          target_email?: string | null;
-          target_name?: string | null;
-        };
-        Returns: string | null;
-      };
       ensure_default_categories_for_user: {
         Args: {
           target_user_id: string;

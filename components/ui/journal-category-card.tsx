@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChevronRight } from "lucide-react";
+import { BookOpenText, ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -24,12 +24,14 @@ type JournalCategoryCardProps = {
   category: JournalCategoryCardData;
   index: number;
   onOpen: () => void;
+  onOpenFullView?: () => void;
 };
 
 export function JournalCategoryCard({
   category,
   index,
   onOpen,
+  onOpenFullView,
 }: JournalCategoryCardProps) {
   return (
     <motion.button
@@ -68,6 +70,28 @@ export function JournalCategoryCard({
         <div className="rounded-[24px] border border-white/60 bg-[linear-gradient(180deg,rgba(251,252,250,0.92),rgba(255,255,255,0.76))] p-4">
           <p className="text-sm leading-7 text-[var(--foreground)]">&ldquo;{category.quote}&rdquo;</p>
         </div>
+
+        {onOpenFullView ? (
+          <span
+            role="button"
+            tabIndex={0}
+            onClick={(event) => {
+              event.stopPropagation();
+              onOpenFullView();
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                event.stopPropagation();
+                onOpenFullView();
+              }
+            }}
+            className="inline-flex items-center gap-2 rounded-full bg-[var(--accent-soft)] px-4 py-2 text-sm font-medium text-[var(--sage-deep)] transition active:scale-[0.98]"
+          >
+            <BookOpenText className="h-4 w-4" />
+            Open full view
+          </span>
+        ) : null}
       </div>
     </motion.button>
   );

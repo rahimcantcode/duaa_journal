@@ -5,7 +5,6 @@ import { SetupRequiredCard } from "@/components/shared/setup-required-card";
 import { PageShell } from "@/components/ui/page-shell";
 import { getCurrentUser } from "@/lib/data/auth";
 import { getOrCreateProfile } from "@/lib/data/profile";
-import { getOrCreateUserSettings } from "@/lib/data/settings";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -28,17 +27,13 @@ export default async function SettingsPage() {
     redirect("/login");
   }
 
-  const [profile, settings] = await Promise.all([
-    getOrCreateProfile(supabase, user),
-    getOrCreateUserSettings(supabase, user.id),
-  ]);
+  const profile = await getOrCreateProfile(supabase, user);
 
   return (
     <SettingsPageClient
       userId={user.id}
       initialName={profile.full_name || "Amina Benaissa"}
       authEmail={user.email ?? ""}
-      initialGoogleFormLink={settings?.google_form_link ?? ""}
     />
   );
 }

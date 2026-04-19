@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 
 import { LogoutButton } from "@/components/shared/logout-button";
@@ -40,7 +41,6 @@ type SettingsPageClientProps = {
   userId: string;
   initialName: string;
   authEmail: string;
-  initialGoogleFormLink: string;
 };
 
 function getInitialTheme(): ThemeId {
@@ -56,10 +56,8 @@ export function SettingsPageClient({
   userId,
   initialName,
   authEmail,
-  initialGoogleFormLink,
 }: SettingsPageClientProps) {
   const [name, setName] = useState(initialName || "Amina Benaissa");
-  const [googleFormLink, setGoogleFormLink] = useState(initialGoogleFormLink);
   const [selectedTheme, setSelectedTheme] = useState<ThemeId>(getInitialTheme);
   const [message, setMessage] = useState("Save preferences");
   const [isPending, startTransition] = useTransition();
@@ -88,19 +86,6 @@ export function SettingsPageClient({
           return;
         }
 
-        const { error: settingsError } = await supabase.from("settings").upsert(
-          {
-            user_id: userId,
-            google_form_link: googleFormLink.trim() || null,
-          },
-          { onConflict: "user_id" },
-        );
-
-        if (settingsError) {
-          setMessage("Could not save your settings right now.");
-          return;
-        }
-
         setMessage("Preferences saved");
       } catch {
         setMessage("Could not save your settings right now.");
@@ -113,7 +98,7 @@ export function SettingsPageClient({
       <SectionHeader
         eyebrow="Settings"
         title="Your space, shaped quietly around you."
-        description="Personal details and sharing preferences can live here once backend saving is connected."
+        description="Personal details, theme, and the page friends can use to leave duaa requests."
       />
 
       <section className="space-y-5 rounded-[30px] border border-white/70 bg-white/78 p-5 shadow-[0_24px_70px_rgba(98,113,95,0.12)]">
@@ -129,11 +114,18 @@ export function SettingsPageClient({
 
         <SettingsField label="Name" value={name} onChange={setName} />
         <SettingsField label="Email" value={authEmail} type="email" readOnly />
-        <SettingsField
-          label="Google Form link"
-          value={googleFormLink}
-          onChange={setGoogleFormLink}
-        />
+
+        <div className="space-y-3 rounded-[26px] border border-white/65 bg-[linear-gradient(180deg,rgba(255,255,255,0.78),rgba(251,252,250,0.94))] p-4 shadow-[0_14px_34px_rgba(106,118,99,0.07)]">
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-[var(--foreground)]">Friends&apos; duaa requests</p>
+            <p className="text-sm leading-6 text-[var(--muted-foreground)]">
+              Friends can now leave duaa requests directly on your Send page. They will appear privately in your journal.
+            </p>
+          </div>
+          <SoftButton variant="secondary" className="w-full justify-center" asChild>
+            <Link href="/send">Preview Send page</Link>
+          </SoftButton>
+        </div>
 
         <div className="space-y-3 rounded-[26px] border border-white/65 bg-[var(--card)]/90 p-4">
           <div className="space-y-1">

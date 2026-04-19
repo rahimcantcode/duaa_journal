@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Heart, PencilLine, Plus, Trash2 } from "lucide-react";
 
 import { BottomSheet } from "@/components/ui/bottom-sheet";
+import { CategoryReadingView } from "@/components/journal/category-reading-view";
 import { DuaaEntryCard } from "@/components/ui/duaa-entry-card";
 import { FloatingActionButton } from "@/components/ui/floating-action-button";
 import { JournalCategoryCard } from "@/components/ui/journal-category-card";
@@ -17,12 +18,13 @@ import { createCategory, deleteCategory, updateCategory } from "@/lib/data/categ
 import { createDua, deleteDua, toggleFavorite, updateDua } from "@/lib/data/duas";
 import { getJournalCategoryPresentation } from "@/lib/data/journal-categories";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
-import type { Category, Dua, FeedbackState } from "@/lib/types/app";
+import type { Category, Dua, FeedbackState, FriendDuaRequest } from "@/lib/types/app";
 
 type JournalPageClientProps = {
   userId: string;
   initialCategories: Category[];
   initialDuas: Dua[];
+  initialFriendRequests: FriendDuaRequest[];
   userName: string;
 };
 
@@ -35,6 +37,7 @@ type ComposerDraft = {
 };
 
 type SheetView = "category" | "composer" | "rename" | "delete";
+type JournalTab = "mine" | "friends";
 
 const emptyDraft: ComposerDraft = {
   categoryId: "",
@@ -44,15 +47,26 @@ const emptyDraft: ComposerDraft = {
   newCategoryName: "",
 };
 
+function formatRequestDate(value: string) {
+  return new Date(value).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
+}
+
 export function JournalPageClient({
   userId,
   initialCategories,
   initialDuas,
+  initialFriendRequests,
   userName,
 }: JournalPageClientProps) {
   const [categories, setCategories] = useState(initialCategories);
   const [duas, setDuas] = useState(initialDuas);
+  const [friendRequests] = useState(initialFriendRequests);
+  const [activeTab, setActiveTab] = useState<JournalTab>("mine");
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
+  const [readingCategoryId, setReadingCategoryId] = useState<string | null>(null);
   const [sheetView, setSheetView] = useState<SheetView | null>(null);
   const [editingDuaId, setEditingDuaId] = useState<string | null>(null);
   const [draft, setDraft] = useState<ComposerDraft>(emptyDraft);
@@ -81,6 +95,7 @@ export function JournalPageClient({
 
   const activeCategory = categoryCards.find((category) => category.id === activeCategoryId) ?? null;
   const activeEntries = activeCategory?.entries ?? [];
+  const readingCategory = categoryCards.find((category) => category.id === readingCategoryId) ?? null;
   const categorySelectOptions = categories.map((category) => ({
     id: category.id,
     name: category.name,
@@ -105,6 +120,7 @@ export function JournalPageClient({
   }
 
   function beginEdit(dua: Dua) {
+    setReadingCategoryId(null);
     setActiveCategoryId(dua.category_id ?? categories.find((item) => item.name === dua.category)?.id ?? null);
     setSheetView("composer");
     setEditingDuaId(dua.id);
@@ -140,6 +156,13 @@ export function JournalPageClient({
   }
 
   function closeSheet() {
+    setSheetView(null);
+    resetEditor();
+    setFeedback(null);
+  }
+
+  function openCategoryReader(categoryId: string) {
+    setReadingCategoryId(categoryId);
     setSheetView(null);
     resetEditor();
     setFeedback(null);
@@ -332,36 +355,120 @@ export function JournalPageClient({
           className="relative z-10"
         />
 
-        <section className="relative z-10 rounded-[32px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(251,252,250,0.96))] p-6 shadow-[0_28px_78px_rgba(110,126,107,0.15)] backdrop-blur-sm sm:p-7">
-          <div className="flex items-end justify-between gap-4">
-            <div className="space-y-3">
-              <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-[rgba(122,122,122,0.8)]">
-                Today&apos;s intention
-              </p>
-              <p className="font-display text-[2.2rem] leading-[0.95] text-[var(--foreground)] sm:text-[2.45rem]">
-                May what is meant for me arrive with ease.
-              </p>
-            </div>
-            <div className="rounded-[24px] bg-[rgba(237,243,235,0.82)] px-3 py-2 text-[10px] font-medium tracking-[0.12em] text-[rgba(93,115,89,0.74)] uppercase">
-              {duas.length} entries
-            </div>
+        <section className="relative z-10 rounded-full border border-white/70 bg-white/68 p-1.5 shadow-[0_18px_42px_rgba(96,111,93,0.09)] backdrop-blur-xl">
+          <div className="grid grid-cols-2 gap-1.5">
+            {[
+              { id: "mine" as const, label: "My duas", count: duas.length },
+              { id: "friends" as const, label: "Friends' duas", count: friendRequests.length },
+            ].map((tab) => {
+              const isActive = activeTab === tab.id;
+
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    closeSheet();
+                  }}
+                  className={`rounded-full px-4 py-3 text-sm font-medium transition-[background-color,box-shadow,color,transform] duration-300 active:scale-[0.985] ${
+                    isActive
+                      ? "bg-[rgba(237,243,235,0.96)] text-[var(--sage-deep)] shadow-[0_12px_30px_rgba(106,118,99,0.12)]"
+                      : "text-[rgba(122,122,122,0.86)]"
+                  }`}
+                >
+                  <span>{tab.label}</span>
+                  <span className="ml-2 rounded-full bg-white/72 px-2 py-0.5 text-[11px]">{tab.count}</span>
+                </button>
+              );
+            })}
           </div>
         </section>
 
-        <section className="relative z-10 space-y-6">
-          {categoryCards.map((category, index) => (
-            <JournalCategoryCard
-              key={category.id}
-              category={category}
-              index={index}
-              onOpen={() => openCategory(category.id)}
-            />
-          ))}
-        </section>
+        {activeTab === "mine" ? (
+          <>
+            <section className="relative z-10 rounded-[32px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(251,252,250,0.96))] p-6 shadow-[0_28px_78px_rgba(110,126,107,0.15)] backdrop-blur-sm sm:p-7">
+              <div className="flex items-end justify-between gap-4">
+                <div className="space-y-3">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-[rgba(122,122,122,0.8)]">
+                    Today&apos;s intention
+                  </p>
+                  <p className="font-display text-[2.2rem] leading-[0.95] text-[var(--foreground)] sm:text-[2.45rem]">
+                    May what is meant for me arrive with ease.
+                  </p>
+                </div>
+                <div className="rounded-[24px] bg-[rgba(237,243,235,0.82)] px-3 py-2 text-[10px] font-medium tracking-[0.12em] text-[rgba(93,115,89,0.74)] uppercase">
+                  {duas.length} entries
+                </div>
+              </div>
+            </section>
 
-        <FloatingActionButton label="Add duaa" onClick={() => beginCreate()}>
-          <Plus className="h-5 w-5" />
-        </FloatingActionButton>
+            <section className="relative z-10 space-y-6">
+              {categoryCards.map((category, index) => (
+                <JournalCategoryCard
+                  key={category.id}
+                  category={category}
+                  index={index}
+                  onOpen={() => openCategory(category.id)}
+                  onOpenFullView={() => openCategoryReader(category.id)}
+                />
+              ))}
+            </section>
+
+            <FloatingActionButton label="Add duaa" onClick={() => beginCreate()}>
+              <Plus className="h-5 w-5" />
+            </FloatingActionButton>
+          </>
+        ) : (
+          <section className="relative z-10 space-y-4">
+            <div className="rounded-[32px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(251,252,250,0.96))] p-6 shadow-[0_28px_78px_rgba(110,126,107,0.13)] backdrop-blur-sm">
+              <div className="flex items-start justify-between gap-4">
+                <div className="space-y-2">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-[rgba(122,122,122,0.8)]">
+                    From loved ones
+                  </p>
+                  <h2 className="font-display text-[2.1rem] leading-none text-[var(--foreground)]">
+                    Prayers entrusted to you
+                  </h2>
+                  <p className="text-sm leading-6 text-[var(--muted-foreground)]">
+                    Requests friends left for you to carry with you during Hajj.
+                  </p>
+                </div>
+                <div className="rounded-full bg-[var(--accent-soft)] p-3 text-[var(--sage-deep)]">
+                  <Heart className="h-5 w-5" />
+                </div>
+              </div>
+            </div>
+
+            {friendRequests.length ? (
+              friendRequests.map((request) => (
+                <article
+                  key={request.id}
+                  className="rounded-[28px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.86),rgba(251,252,250,0.95))] p-5 shadow-[0_18px_42px_rgba(96,111,93,0.09)]"
+                >
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <p className="font-medium text-[var(--foreground)]">{request.name}</p>
+                    <p className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-[11px] font-medium text-[var(--sage-deep)]">
+                      {formatRequestDate(request.created_at)}
+                    </p>
+                  </div>
+                  <p className="text-sm leading-7 text-[var(--muted-foreground)]">
+                    &ldquo;{request.dua_request}&rdquo;
+                  </p>
+                </article>
+              ))
+            ) : (
+              <article className="rounded-[28px] border border-white/70 bg-white/82 p-5 text-center shadow-[0_18px_42px_rgba(96,111,93,0.08)]">
+                <p className="font-display text-3xl leading-none text-[var(--foreground)]">
+                  Nothing has been left here yet.
+                </p>
+                <p className="mt-3 text-sm leading-7 text-[var(--muted-foreground)]">
+                  When loved ones leave duaa requests, they&apos;ll appear here softly.
+                </p>
+              </article>
+            )}
+          </section>
+        )}
 
         <MobileBottomNav />
       </PageShell>
@@ -581,6 +688,15 @@ export function JournalPageClient({
           </>
         )}
       </BottomSheet>
+
+      <CategoryReadingView
+        isOpen={Boolean(readingCategory)}
+        title={readingCategory?.title ?? ""}
+        description={readingCategory?.description ?? ""}
+        entries={readingCategory?.entries ?? []}
+        onClose={() => setReadingCategoryId(null)}
+        onEdit={beginEdit}
+      />
     </>
   );
 }

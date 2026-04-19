@@ -28,12 +28,12 @@ export default function HomePage() {
           </p>
         </div>
         <p className="max-w-md text-sm leading-7 text-[var(--muted-foreground)]">
-          If you love her, this is also a gentle place to leave a prayer for the journey ahead.
+          If you love her, this is also where you can leave a duaa request for her to carry with her.
         </p>
       </AnimatedReveal>
 
       <AnimatedReveal delay={0.04}>
-        <section className="relative left-1/2 w-screen max-w-none -translate-x-1/2 px-4 py-1 sm:px-6">
+        <section className="relative left-1/2 w-screen max-w-none -translate-x-1/2 space-y-6 px-4 py-1 sm:px-6">
           <div className="mx-auto w-full max-w-[42rem]">
             <Image
               src="/home-featured-duaa.png"
@@ -43,6 +43,17 @@ export default function HomePage() {
               className="h-auto w-full rounded-[32px] object-contain shadow-[0_30px_82px_rgba(102,116,98,0.16)]"
               sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 768px) calc(100vw - 3rem), 42rem"
             />
+          </div>
+          <div className="mx-auto flex w-full max-w-[42rem] justify-center px-2">
+            <SoftButton
+              asChild
+              className="min-h-14 w-full justify-center bg-[var(--sage-strong)] text-[var(--foreground)] shadow-[0_22px_54px_rgba(127,150,123,0.24)] sm:w-auto sm:px-7"
+            >
+              <Link href="/send">
+                Leave a duaa request
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </SoftButton>
           </div>
         </section>
       </AnimatedReveal>
@@ -82,14 +93,14 @@ export default function HomePage() {
                   For loved ones
                 </p>
                 <h2 className="font-display text-[2rem] leading-[0.95] text-[var(--foreground)]">
-                  Leave Amina a duaa
+                  Send your duaa request
                 </h2>
                 <p className="text-sm leading-7 text-[var(--muted-foreground)]">
-                  Share a prayer, a kind hope, or a few gentle words for her journey ahead.
+                  Write what you want Amina to make duaa for during Hajj, and it will reach her privately.
                 </p>
               </div>
               <SoftButton asChild variant="secondary">
-                <Link href="/send">Leave Amina a duaa</Link>
+                <Link href="/send">Leave a duaa request</Link>
               </SoftButton>
             </div>
           </article>

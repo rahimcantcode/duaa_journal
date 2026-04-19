@@ -6,6 +6,7 @@ import { PageShell } from "@/components/ui/page-shell";
 import { getCurrentUser } from "@/lib/data/auth";
 import { ensureDefaultCategories, getUserCategories, syncLegacyDuaCategories } from "@/lib/data/categories";
 import { getUserDuas } from "@/lib/data/duas";
+import { getFriendDuaRequests } from "@/lib/data/friends-dua-requests";
 import { getOrCreateProfile } from "@/lib/data/profile";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -32,10 +33,11 @@ export default async function JournalPage() {
   await ensureDefaultCategories(supabase, user.id);
   await syncLegacyDuaCategories(supabase, user.id);
 
-  const [profile, categories, duas] = await Promise.all([
+  const [profile, categories, duas, friendRequests] = await Promise.all([
     getOrCreateProfile(supabase, user),
     getUserCategories(supabase, user.id),
     getUserDuas(supabase, user.id),
+    getFriendDuaRequests(supabase),
   ]);
 
   return (
@@ -43,6 +45,7 @@ export default async function JournalPage() {
       userId={user.id}
       initialCategories={categories}
       initialDuas={duas}
+      initialFriendRequests={friendRequests}
       userName={profile.full_name || "Amina Benaissa"}
     />
   );

@@ -8,7 +8,3 @@ export function getSupabaseEnv() {
     anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
   };
 }
-
-export function getPublicProfileEmail() {
-  return process.env.NEXT_PUBLIC_PUBLIC_PROFILE_EMAIL ?? "amina@example.com";
-}

@@ -8,6 +8,8 @@ export type Category = Database["public"]["Tables"]["categories"]["Row"];
 export type CategoryInsert = Database["public"]["Tables"]["categories"]["Insert"];
 export type UserSettings = Database["public"]["Tables"]["settings"]["Row"];
 export type SettingsInsert = Database["public"]["Tables"]["settings"]["Insert"];
+export type FriendDuaRequest = Database["public"]["Tables"]["friends_dua_requests"]["Row"];
+export type FriendDuaRequestInsert = Database["public"]["Tables"]["friends_dua_requests"]["Insert"];
 
 export type FeedbackState = {
   type: "error" | "success" | "info";

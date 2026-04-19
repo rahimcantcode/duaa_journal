@@ -1,3 +1,5 @@
+import { trustedHajjVideoLinks } from "@/lib/data/hajj-video-links";
+
 export type DuaaEntry = {
   id: string;
   title: string;
@@ -180,7 +182,7 @@ export const hajjSteps: HajjStep[] = [
       "Forgetting practical basics like sandals, pins, or a small pouch for documents.",
     ],
     calmNote: "Start with steadiness, not pressure. A calm beginning helps the rest of the journey feel grounded.",
-    learnMoreUrl: "https://www.youtube.com/results?search_query=ihram+hajj+step+by+step",
+    learnMoreUrl: trustedHajjVideoLinks.ihram,
   },
   {
     id: "tawaf",
@@ -206,7 +208,7 @@ export const hajjSteps: HajjStep[] = [
       "Thinking you need special Arabic wording for every circuit.",
     ],
     calmNote: "The point is devotion, not perfection. A peaceful tawaf is better than a frantic one.",
-    learnMoreUrl: "https://www.youtube.com/results?search_query=tawaf+hajj+explained+step+by+step",
+    learnMoreUrl: trustedHajjVideoLinks.tawaf,
   },
   {
     id: "sai",
@@ -232,7 +234,7 @@ export const hajjSteps: HajjStep[] = [
       "Starting from the wrong hill and getting confused midway.",
     ],
     calmNote: "This step honors patient effort. Let it remind you that sincere striving is itself beloved.",
-    learnMoreUrl: "https://www.youtube.com/results?search_query=sai+hajj+step+by+step",
+    learnMoreUrl: trustedHajjVideoLinks.sai,
   },
   {
     id: "mina",
@@ -258,7 +260,7 @@ export const hajjSteps: HajjStep[] = [
       "Misplacing essentials in the crowd and then feeling panicked.",
     ],
     calmNote: "Not every sacred moment feels dramatic. Sometimes worship looks like patience, order, and small acts of care.",
-    learnMoreUrl: "https://www.youtube.com/results?search_query=mina+hajj+guide",
+    learnMoreUrl: trustedHajjVideoLinks.mina,
   },
   {
     id: "arafat",
@@ -284,7 +286,7 @@ export const hajjSteps: HajjStep[] = [
       "Forgetting practical self-care until exhaustion takes over.",
     ],
     calmNote: "Come as you are. A sincere, tired, hopeful heart is still a heart turned toward Allah.",
-    learnMoreUrl: "https://www.youtube.com/results?search_query=day+of+arafat+hajj+explained",
+    learnMoreUrl: trustedHajjVideoLinks.arafat,
   },
   {
     id: "muzdalifah",
@@ -310,7 +312,7 @@ export const hajjSteps: HajjStep[] = [
       "Separating from the group without a clear meeting point.",
     ],
     calmNote: "This step is quieter by design. Let the simplicity of it soften you rather than unsettle you.",
-    learnMoreUrl: "https://www.youtube.com/results?search_query=muzdalifah+hajj+guide",
+    learnMoreUrl: trustedHajjVideoLinks.muzdalifah,
   },
   {
     id: "jamarat",
@@ -336,7 +338,7 @@ export const hajjSteps: HajjStep[] = [
       "Entering without knowing your timing and route first.",
     ],
     calmNote: "The strength of this step is in steady intention, not force.",
-    learnMoreUrl: "https://www.youtube.com/results?search_query=jamarat+hajj+step+by+step",
+    learnMoreUrl: trustedHajjVideoLinks.jamarat,
   },
   {
     id: "qurbani",
@@ -362,7 +364,7 @@ export const hajjSteps: HajjStep[] = [
       "Leaving the logistics until the last minute.",
     ],
     calmNote: "Even when someone else handles the logistics, your intention and reflection still matter deeply.",
-    learnMoreUrl: "https://www.youtube.com/results?search_query=qurbani+hajj+explained",
+    learnMoreUrl: trustedHajjVideoLinks.qurbani,
   },
   {
     id: "final-tawaf",
@@ -388,7 +390,7 @@ export const hajjSteps: HajjStep[] = [
       "Leaving all packing and transport details to the very last moment.",
     ],
     calmNote: "A beautiful ending is not about intensity. It is about leaving with gratitude, humility, and a heart that stays turned toward Allah.",
-    learnMoreUrl: "https://www.youtube.com/results?search_query=farewell+tawaf+hajj+guide",
+    learnMoreUrl: trustedHajjVideoLinks.finalTawaf,
   },
 ];
 

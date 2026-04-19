@@ -31,7 +31,6 @@ create table if not exists public.duas (
 create table if not exists public.settings (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null unique references auth.users(id) on delete cascade,
-  google_form_link text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -143,26 +142,3 @@ for update
 to authenticated
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
-
-create or replace function public.get_public_google_form_link(
-  target_email text default null,
-  target_name text default 'Amina Benaissa'
-)
-returns text
-language sql
-security definer
-set search_path = public
-as $$
-  select s.google_form_link
-  from public.settings s
-  join public.profiles p on p.id = s.user_id
-  where s.google_form_link is not null
-    and (
-      (target_email is not null and lower(p.email) = lower(target_email))
-      or (target_email is null and p.full_name = target_name)
-    )
-  order by s.updated_at desc
-  limit 1;
-$$;
-
-grant execute on function public.get_public_google_form_link(text, text) to anon, authenticated;
