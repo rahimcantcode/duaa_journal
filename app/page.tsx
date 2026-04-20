@@ -23,12 +23,12 @@ export default function HomePage() {
             <span className="block text-[var(--sage-deep)]">Duaa Journal</span>
           </h1>
           <p className="max-w-md text-[15px] leading-7 text-[var(--muted-foreground)]">
-            A quiet place for the duaas you carry into Hajj, for your family, your future, and what your heart is still asking
+            A quiet place for the duaas Amina carries into Hajj, for family, the future, and what the heart is still asking
             for.
           </p>
         </div>
         <p className="max-w-md text-sm leading-7 text-[var(--muted-foreground)]">
-          If you love her, this is also where you can leave a duaa request for her to carry with her.
+          This is the place where you can leave a duaa request for her to carry with her.
         </p>
       </AnimatedReveal>
 
@@ -104,22 +104,6 @@ export default function HomePage() {
               </SoftButton>
             </div>
           </article>
-        </section>
-      </AnimatedReveal>
-
-      <AnimatedReveal delay={0.18}>
-        <section className="grid gap-4 sm:grid-cols-2">
-          {[
-            "Journal: a private space for the prayers she wants to carry into Hajj.",
-            "Guide: a calm companion for the steps waiting ahead.",
-          ].map((item) => (
-            <div
-              key={item}
-              className="rounded-[26px] border border-white/60 bg-white/65 p-5 text-sm leading-6 text-[var(--muted-foreground)] shadow-[0_18px_40px_rgba(110,126,107,0.08)]"
-            >
-              {item}
-            </div>
-          ))}
         </section>
       </AnimatedReveal>
 
