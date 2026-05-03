@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BookOpenText, Footprints } from "lucide-react";
+import { BookMarked, BookOpenText, ExternalLink, Footprints } from "lucide-react";
 
 import { AnimatedReveal } from "@/components/ui/animated-reveal";
 import { GuideDetailSheet } from "@/components/ui/guide-detail-sheet";
@@ -13,6 +13,16 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { hajjSteps } from "@/lib/mock-data";
 
 type GuideMode = "steps" | "duaas";
+type DuaaBookId = "quran-sunnah" | "hajj-umrah-cards";
+
+type DuaaBook = {
+  id: DuaaBookId;
+  title: string;
+  label: string;
+  description: string;
+  href: string;
+  pages: string;
+};
 
 const guideModeCopy: Record<GuideMode, { title: string; description: string }> = {
   steps: {
@@ -21,17 +31,38 @@ const guideModeCopy: Record<GuideMode, { title: string; description: string }> =
       "A gentle companion for the path ahead, with deeper guidance available whenever you want to slow down and open a step.",
   },
   duaas: {
-    title: "Duaa from Qur'an and Sunnah, close when you need it.",
+    title: "Duaa books, close when you need them.",
     description:
-      "A quiet book of authentic duaas to keep nearby as you move through the journey.",
+      "A quiet shelf of duaas to keep nearby as you move through the journey.",
   },
 };
 
+const duaaBooks: DuaaBook[] = [
+  {
+    id: "quran-sunnah",
+    title: "Duaa from Qur'an and Sunnah",
+    label: "Qur'an and Sunnah",
+    description: "Invocations gathered from Qur'an and Sunnah for steady reflection.",
+    href: "/duaa-book.pdf",
+    pages: "Book PDF",
+  },
+  {
+    id: "hajj-umrah-cards",
+    title: "Hajj and Umrah Dua Cards",
+    label: "Hajj and Umrah",
+    description: "A short set of dua cards for the moments of Hajj and Umrah.",
+    href: "/hajj-umrah-dua-cards.pdf",
+    pages: "6 pages",
+  },
+];
+
 export default function GuidePage() {
   const [activeMode, setActiveMode] = useState<GuideMode>("steps");
+  const [activeBookId, setActiveBookId] = useState<DuaaBookId>("quran-sunnah");
   const [activeStepId, setActiveStepId] = useState<string | null>(null);
   const activeStep = hajjSteps.find((step) => step.id === activeStepId) ?? null;
   const activeCopy = guideModeCopy[activeMode];
+  const activeBook = duaaBooks.find((book) => book.id === activeBookId) ?? duaaBooks[0];
 
   return (
     <>
@@ -86,12 +117,12 @@ export default function GuidePage() {
               <p className="font-display text-[2rem] leading-[0.95] text-[var(--foreground)]">
                 {activeMode === "steps"
                   ? "Scan the step, then open it when you want the fuller picture."
-                  : "Open the book here when you want duaas from Qur'an and Sunnah."}
+                  : "Choose the dua book you want to keep close right now."}
               </p>
               <p className="text-sm leading-7 text-[var(--muted-foreground)]">
                 {activeMode === "steps"
                   ? "Each card keeps the main journey light, while the detail view holds practical reminders, what to do, and one calm video path for learning more."
-                  : "The PDF stays inside this page so you can read, zoom, and move through it without leaving the guide."}
+                  : "Two quiet references for the duaas you want nearby during Hajj and Umrah."}
               </p>
             </div>
           </section>
@@ -107,26 +138,83 @@ export default function GuidePage() {
           </section>
         ) : (
           <AnimatedReveal className="relative z-10" delay={0.06}>
-            <section className="overflow-hidden rounded-[30px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(251,252,250,0.98))] shadow-[0_24px_64px_rgba(99,113,95,0.11)]">
-              <div className="flex items-center justify-between gap-4 border-b border-white/70 px-4 py-3">
-                <div>
-                  <p className="font-medium text-[var(--foreground)]">Duaa from Qur&apos;an and Sunnah</p>
-                  <p className="text-xs leading-5 text-[var(--muted-foreground)]">Read the book in place.</p>
-                </div>
-                <a
-                  href="/duaa-book.pdf"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="shrink-0 rounded-full bg-[var(--accent-soft)] px-3 py-2 text-xs font-medium text-[var(--sage-deep)]"
-                >
-                  Open PDF
-                </a>
+            <section className="space-y-4">
+              <div className="grid gap-3 md:grid-cols-2">
+                {duaaBooks.map((book) => {
+                  const isSelected = activeBook.id === book.id;
+
+                  return (
+                    <article
+                      key={book.id}
+                      className={`relative overflow-hidden rounded-[28px] border p-4 shadow-[0_18px_42px_rgba(99,113,95,0.09)] transition ${
+                        isSelected
+                          ? "border-[rgba(168,191,163,0.58)] bg-[linear-gradient(180deg,rgba(237,243,235,0.88),rgba(251,252,250,0.98))]"
+                          : "border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(251,252,250,0.98))]"
+                      }`}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setActiveBookId(book.id)}
+                        className="block w-full text-left active:scale-[0.99]"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="rounded-2xl bg-white/72 p-3 text-[var(--sage-deep)] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.72)]">
+                            <BookMarked className="h-5 w-5" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[rgba(122,122,122,0.74)]">
+                              {book.label}
+                            </p>
+                            <h2 className="mt-1 font-display text-2xl leading-none text-[var(--foreground)]">
+                              {book.title}
+                            </h2>
+                            <p className="mt-3 text-sm leading-6 text-[var(--muted-foreground)]">
+                              {book.description}
+                            </p>
+                          </div>
+                        </div>
+                      </button>
+                      <div className="mt-4 flex items-center justify-between gap-3 pl-14">
+                        <span className="rounded-full bg-white/74 px-3 py-1 text-[11px] font-medium text-[rgba(93,115,89,0.78)]">
+                          {book.pages}
+                        </span>
+                        <a
+                          href={book.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent-soft)] px-3 py-2 text-xs font-medium text-[var(--sage-deep)]"
+                        >
+                          Open
+                          <ExternalLink className="h-3.5 w-3.5" />
+                        </a>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
-              <iframe
-                title="Duaa from Qur'an and Sunnah book"
-                src="/duaa-book.pdf#view=FitH"
-                className="h-[72vh] min-h-[32rem] w-full bg-white"
-              />
+
+              <div className="hidden overflow-hidden rounded-[30px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(251,252,250,0.98))] shadow-[0_24px_64px_rgba(99,113,95,0.11)] md:block">
+                <div className="flex items-center justify-between gap-4 border-b border-white/70 px-4 py-3">
+                  <div>
+                    <p className="font-medium text-[var(--foreground)]">{activeBook.title}</p>
+                    <p className="text-xs leading-5 text-[var(--muted-foreground)]">{activeBook.description}</p>
+                  </div>
+                  <a
+                    href={activeBook.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[var(--accent-soft)] px-3 py-2 text-xs font-medium text-[var(--sage-deep)]"
+                  >
+                    Open
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                </div>
+                <iframe
+                  title={`${activeBook.title} book`}
+                  src={`${activeBook.href}#view=FitH`}
+                  className="h-[76vh] min-h-[34rem] w-full bg-white"
+                />
+              </div>
             </section>
           </AnimatedReveal>
         )}
