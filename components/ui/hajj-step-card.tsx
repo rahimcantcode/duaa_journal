@@ -8,11 +8,10 @@ import { cn } from "@/lib/utils";
 
 type HajjStepCardProps = {
   step: HajjStep;
-  index: number;
   onOpen: () => void;
 };
 
-export function HajjStepCard({ step, index, onOpen }: HajjStepCardProps) {
+export function HajjStepCard({ step, onOpen }: HajjStepCardProps) {
   return (
     <motion.button
       type="button"
@@ -23,8 +22,7 @@ export function HajjStepCard({ step, index, onOpen }: HajjStepCardProps) {
       transition={{ type: "spring", stiffness: 340, damping: 24, mass: 0.7 }}
       onClick={onOpen}
       className={cn(
-        "relative overflow-hidden rounded-[28px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.84),rgba(251,252,250,0.94))] p-5 text-left shadow-[0_18px_42px_rgba(99,113,95,0.09)]",
-        index % 2 === 0 ? "ml-8" : "ml-12",
+        "relative w-full overflow-hidden rounded-[28px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.84),rgba(251,252,250,0.94))] p-5 text-left shadow-[0_18px_42px_rgba(99,113,95,0.09)]",
       )}
     >
       <div className="pointer-events-none absolute left-[-1.1rem] top-8 h-4 w-4 rounded-full border border-white/70 bg-[rgba(237,243,235,0.94)] shadow-[0_0_0_8px_rgba(246,247,245,0.88)]" />

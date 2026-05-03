@@ -54,6 +54,26 @@ function formatRequestDate(value: string) {
   });
 }
 
+function formatFriendRequestText(value: string) {
+  const trimmed = value.trim().replace(/^["“”]+|["“”]+$/g, "");
+  const parts = trimmed
+    .split(/\s*\*\s+/)
+    .map((part) => part.trim().replace(/\s+/g, " "))
+    .filter(Boolean);
+
+  if (parts.length <= 1) {
+    return {
+      intro: null,
+      intentions: [trimmed],
+    };
+  }
+
+  return {
+    intro: parts[0],
+    intentions: parts.slice(1),
+  };
+}
+
 export function JournalPageClient({
   userId,
   initialCategories,
@@ -404,11 +424,10 @@ export function JournalPageClient({
             </section>
 
             <section className="relative z-10 space-y-6">
-              {categoryCards.map((category, index) => (
+              {categoryCards.map((category) => (
                 <JournalCategoryCard
                   key={category.id}
                   category={category}
-                  index={index}
                   onOpen={() => openCategory(category.id)}
                   onOpenFullView={() => openCategoryReader(category.id)}
                 />
@@ -441,22 +460,46 @@ export function JournalPageClient({
             </div>
 
             {friendRequests.length ? (
-              friendRequests.map((request) => (
-                <article
-                  key={request.id}
-                  className="rounded-[28px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.86),rgba(251,252,250,0.95))] p-5 shadow-[0_18px_42px_rgba(96,111,93,0.09)]"
-                >
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <p className="font-medium text-[var(--foreground)]">{request.name}</p>
-                    <p className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-[11px] font-medium text-[var(--sage-deep)]">
-                      {formatRequestDate(request.created_at)}
-                    </p>
-                  </div>
-                  <p className="text-sm leading-7 text-[var(--muted-foreground)]">
-                    &ldquo;{request.dua_request}&rdquo;
-                  </p>
-                </article>
-              ))
+              friendRequests.map((request) => {
+                const formattedRequest = formatFriendRequestText(request.dua_request);
+
+                return (
+                  <article
+                    key={request.id}
+                    className="rounded-[28px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.9),rgba(251,252,250,0.98))] p-5 shadow-[0_18px_42px_rgba(96,111,93,0.09)]"
+                  >
+                    <div className="mb-4 flex items-start justify-between gap-3">
+                      <div>
+                        <p className="font-medium text-[var(--foreground)]">{request.name}</p>
+                        <p className="mt-1 text-xs uppercase tracking-[0.18em] text-[rgba(122,122,122,0.72)]">
+                          Friend request
+                        </p>
+                      </div>
+                      <p className="shrink-0 rounded-full bg-[var(--accent-soft)] px-3 py-1 text-[11px] font-medium text-[var(--sage-deep)]">
+                        {formatRequestDate(request.created_at)}
+                      </p>
+                    </div>
+
+                    {formattedRequest.intro ? (
+                      <p className="mb-4 border-l-2 border-[var(--sage)]/45 pl-3 text-sm leading-7 text-[var(--muted-foreground)]">
+                        &ldquo;{formattedRequest.intro}&rdquo;
+                      </p>
+                    ) : null}
+
+                    <div className="space-y-2.5">
+                      {formattedRequest.intentions.map((intention, index) => (
+                        <div
+                          key={`${request.id}-${index}`}
+                          className="flex gap-3 rounded-2xl bg-white/68 px-3.5 py-3 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.7)]"
+                        >
+                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--sage-strong)]" />
+                          <p className="text-sm leading-6 text-[var(--muted-foreground)]">{intention}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </article>
+                );
+              })
             ) : (
               <article className="rounded-[28px] border border-white/70 bg-white/82 p-5 text-center shadow-[0_18px_42px_rgba(96,111,93,0.08)]">
                 <p className="font-display text-3xl leading-none text-[var(--foreground)]">
